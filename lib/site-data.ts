@@ -5,8 +5,8 @@ export const siteConfig = {
     "Raichev Electric provides professional electrical design, installation, and maintenance for commercial, residential, low voltage, and specialty projects across Orange County and San Diego.",
   phone: "(949) 295-6436",
   phoneHref: "tel:+19492956436",
-  email: "steven@sprelectricinc.com",
-  emailHref: "mailto:steven@sprelectricinc.com",
+  email: "steven@raichevelectric.com",
+  emailHref: "mailto:steven@raichevelectric.com",
   address: {
     street: "123 Main Street",
     city: "Orange County & San Diego",
