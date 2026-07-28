@@ -1,0 +1,383 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply overflow-x-hidden bg-brand-cream text-brand-navy antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+    overflow-wrap: anywhere;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+  }
+
+  ::selection {
+    @apply bg-brand-electric/30 text-brand-navy;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px;
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-14 sm:py-20 md:py-28;
+  }
+
+  .gradient-hero {
+    background:
+      radial-gradient(ellipse at top right, rgba(212, 175, 55, 0.16), transparent 50%),
+      linear-gradient(160deg, #0e0e0e 0%, #141414 55%, #1a160c 100%);
+  }
+
+  .gradient-electric {
+    background: linear-gradient(135deg, #b9932f 0%, #e7c76a 100%);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-electric to-brand-amber bg-clip-text text-transparent;
+  }
+
+  .surface-glass {
+    @apply border border-white/10 bg-white/[0.03] backdrop-blur-md;
+  }
+
+  .bg-storm-depth {
+    background-color: #0e0e0e;
+    background-image:
+      radial-gradient(
+        ellipse 90% 55% at 15% -5%,
+        rgba(212, 175, 55, 0.11),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 70% 50% at 95% 20%,
+        rgba(70, 80, 105, 0.22),
+        transparent 52%
+      ),
+      radial-gradient(
+        ellipse 80% 45% at 50% 110%,
+        rgba(40, 34, 18, 0.85),
+        transparent 55%
+      ),
+      linear-gradient(165deg, #141414 0%, #0e0e0e 45%, #15120c 100%);
+  }
+
+  .bg-ivory-field {
+    background-color: #faf7f0;
+    background-image:
+      radial-gradient(
+        ellipse 80% 50% at 10% 0%,
+        rgba(212, 175, 55, 0.1),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 95% 30%,
+        rgba(20, 20, 20, 0.04),
+        transparent 50%
+      ),
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.55) 0%,
+        transparent 40%,
+        rgba(212, 175, 55, 0.05) 100%
+      ),
+      repeating-linear-gradient(
+        -18deg,
+        transparent 0,
+        transparent 11px,
+        rgba(14, 14, 14, 0.015) 11px,
+        rgba(14, 14, 14, 0.015) 12px
+      );
+  }
+
+  .tone-split {
+    background:
+      linear-gradient(
+        105deg,
+        #faf7f0 0%,
+        #faf7f0 46%,
+        #0e0e0e 46.2%,
+        #12100c 100%
+      );
+  }
+
+  @media (max-width: 767px) {
+    .tone-split {
+      background:
+        linear-gradient(
+          180deg,
+          #faf7f0 0%,
+          #faf7f0 42%,
+          #0e0e0e 42.15%,
+          #12100c 100%
+        );
+    }
+  }
+
+  .safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .storm-cloud {
+    animation: stormDrift 18s ease-in-out infinite alternate;
+  }
+
+  .storm-cloud-a {
+    animation-duration: 22s;
+  }
+
+  .storm-cloud-b {
+    animation-duration: 16s;
+    animation-delay: -4s;
+  }
+
+  .storm-cloud-c {
+    animation-duration: 26s;
+    animation-delay: -8s;
+  }
+
+  .storm-rain {
+    background-image: repeating-linear-gradient(
+      -12deg,
+      transparent 0,
+      transparent 8px,
+      rgba(255, 255, 255, 0.035) 8px,
+      rgba(255, 255, 255, 0.035) 9px
+    );
+    background-size: 28px 48px;
+    animation: rainFall 0.7s linear infinite;
+  }
+
+  .current-line {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(212, 175, 55, 0.9),
+      transparent
+    );
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: currentSweep 1.4s linear infinite;
+  }
+
+  .current-line-vert {
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(212, 175, 55, 0.9),
+      transparent
+    );
+    background-size: 100% 40%;
+    background-repeat: no-repeat;
+    animation: currentSweepVert 1.6s linear infinite;
+  }
+
+  .current-line-delay {
+    animation-delay: 0.45s;
+  }
+
+  .current-flow {
+    animation: currentTravel 2.4s linear infinite;
+  }
+
+  .charge-pulse {
+    animation: chargePulse 2.8s ease-in-out infinite;
+  }
+
+  .energy-dot {
+    transition: background-color 0.15s ease, box-shadow 0.15s ease,
+      transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  .energy-dot-live {
+    animation: energyDotIgnite 2.4s linear infinite;
+    animation-delay: calc(
+      (var(--dot-index) / var(--dot-count)) * 2.4s - 0.12s
+    );
+  }
+}
+
+@keyframes stormDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(4%, 3%, 0) scale(1.08);
+  }
+}
+
+@keyframes rainFall {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 14px 48px;
+  }
+}
+
+@keyframes currentSweep {
+  0% {
+    background-position: -40% 0;
+  }
+  100% {
+    background-position: 140% 0;
+  }
+}
+
+@keyframes currentSweepVert {
+  0% {
+    background-position: 0 -40%;
+  }
+  100% {
+    background-position: 0 140%;
+  }
+}
+
+@keyframes currentTravel {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes energyDotIgnite {
+  0%,
+  8% {
+    background-color: #0e0e0e;
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: none;
+    transform: scale(1);
+  }
+  12%,
+  22% {
+    background-color: #e7c76a;
+    border-color: #ffd84d;
+    box-shadow:
+      0 0 12px rgba(212, 175, 55, 0.95),
+      0 0 28px rgba(231, 199, 106, 0.55);
+    transform: scale(1.45);
+  }
+  30%,
+  100% {
+    background-color: #0e0e0e;
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+
+@keyframes chargePulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes ambientDriftA {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.08);
+  }
+}
+
+@keyframes ambientDriftB {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-5%, 6%, 0) scale(1.06);
+  }
+}
+
+@keyframes ambientDriftC {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -5%, 0) scale(1.1);
+  }
+}
+
+.ambient-drift-a {
+  animation: ambientDriftA 22s ease-in-out infinite;
+}
+
+.ambient-drift-b {
+  animation: ambientDriftB 28s ease-in-out infinite;
+}
+
+.ambient-drift-c {
+  animation: ambientDriftC 24s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storm-cloud,
+  .storm-rain,
+  .current-line,
+  .current-line-vert,
+  .current-flow,
+  .charge-pulse,
+  .energy-dot-live,
+  .ambient-drift-a,
+  .ambient-drift-b,
+  .ambient-drift-c {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .storm-cloud {
+    animation-duration: 28s;
+  }
+}
+
+body.menu-open .mobile-call-bar {
+  display: none;
+}
+
+/* Custom lightning cursor — desktop only (class toggled in JS) */
+html.has-bolt-cursor,
+html.has-bolt-cursor * {
+  cursor: none !important;
+}
+
+html.has-bolt-cursor input,
+html.has-bolt-cursor textarea,
+html.has-bolt-cursor select,
+html.has-bolt-cursor [contenteditable="true"] {
+  cursor: text !important;
+}
