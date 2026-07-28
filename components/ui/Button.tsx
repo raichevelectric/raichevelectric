@@ -44,7 +44,7 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes} onClick={props.onClick}>
+      <a href={href} className={classes}>
         {children}
       </a>
     );
