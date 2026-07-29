@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { siteConfig } from "@/lib/site-data";
 
 interface ImageAttachment {
@@ -112,7 +112,7 @@ function buildEmailHtml(data: FormPayload) {
   `;
 }
 
-function toResendAttachments(images: ImageAttachment[] = []) {
+function toSmtpAttachments(images: ImageAttachment[] = []) {
   return images.map((image) => {
     const base64 = image.dataUrl.includes(",")
       ? image.dataUrl.split(",")[1]
@@ -120,9 +120,30 @@ function toResendAttachments(images: ImageAttachment[] = []) {
 
     return {
       filename: image.name,
-      content: base64,
+      content: Buffer.from(base64, "base64"),
+      contentType: image.type,
     };
   });
+}
+
+function getSmtpConfig() {
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+  if (!user || !pass) return null;
+
+  const port = Number(process.env.SMTP_PORT || "465");
+  const secure =
+    process.env.SMTP_SECURE?.trim() === "true" ||
+    process.env.SMTP_SECURE?.trim() === "1" ||
+    port === 465;
+
+  return {
+    host: process.env.SMTP_HOST?.trim() || "mail.privateemail.com",
+    port,
+    secure,
+    user,
+    pass,
+  };
 }
 
 export async function POST(request: NextRequest) {
@@ -134,36 +155,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error }, { status: 400 });
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const smtp = getSmtpConfig();
     const toEmail =
       process.env.CONTACT_TO_EMAIL?.trim() || siteConfig.email;
     const fromEmail =
       process.env.CONTACT_FROM_EMAIL?.trim() ||
-      "Raichev Electric <onboarding@resend.dev>";
+      `Raichev Electric <${smtp?.user || siteConfig.email}>`;
     const webhookUrl = process.env.CONTACT_FORM_WEBHOOK_URL;
+    const isQuote = data.formType === "quote";
 
-    if (resendApiKey) {
-      const resend = new Resend(resendApiKey);
-      const isQuote = data.formType === "quote";
+    if (smtp) {
+      const transporter = nodemailer.createTransport({
+        host: smtp.host,
+        port: smtp.port,
+        secure: smtp.secure,
+        auth: {
+          user: smtp.user,
+          pass: smtp.pass,
+        },
+      });
 
-      const { error: sendError } = await resend.emails.send({
+      await transporter.sendMail({
         from: fromEmail,
-        to: [toEmail],
+        to: toEmail,
         replyTo: data.email,
         subject: isQuote
           ? `Quote request from ${data.name}`
           : `Contact message from ${data.name}`,
         html: buildEmailHtml(data),
-        attachments: toResendAttachments(data.images),
+        attachments: toSmtpAttachments(data.images),
       });
-
-      if (sendError) {
-        console.error("[Resend]", sendError);
-        return NextResponse.json(
-          { error: "Failed to send email. Please try again or call us." },
-          { status: 502 }
-        );
-      }
     } else if (webhookUrl) {
       await fetch(webhookUrl, {
         method: "POST",
@@ -183,6 +204,7 @@ export async function POST(request: NextRequest) {
         phone: data.phone,
         imageCount: data.images?.length ?? 0,
         submittedAt: new Date().toISOString(),
+        warning: "SMTP is not configured",
       });
     }
 
@@ -193,7 +215,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[Contact API]", error);
     return NextResponse.json(
-      { error: "Failed to process form submission" },
+      { error: "Failed to send email. Please try again or call us." },
       { status: 500 }
     );
   }
